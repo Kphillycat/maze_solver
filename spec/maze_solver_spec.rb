@@ -15,7 +15,7 @@ describe "maze_solver" do
 		end
 
 		it "should move to new location" do
-			subject.move(3,1)
+			subject.move_to(3,1)
 			expect(subject.position).to eq([3,1])
 		end
 
@@ -27,9 +27,37 @@ describe "maze_solver" do
 			expect(subject.move?(4,1)).to eq(false)
 		end
 
-		it "should have array of whether it can move left, right, up or down" do
+		it "should return array of whether it can move left, right, up or down" do
 			expect(subject.possible_moves).to eq([false,true,false,false])
 		end
+
+		it "should move left" do
+			subject.move_to(1,2)
+			subject.move_left
+			expect(subject.position).to eq([1,1])
+		end
+
+		it "should move right" do
+			subject.move_to(1,2)
+			subject.move_right
+			expect(subject.position).to eq([1,3])
+		end
+
+		it "should move up" do
+			subject.move_to(2,9)
+			subject.move_up
+			expect(subject.position).to eq([1,9])
+		end
 		
+		it "should move down" do
+			subject.move_to(1,9)
+			subject.move_down
+			expect(subject.position).to eq([2,9])
+		end
+		
+		it "should move based on array" do
+			subject.move
+			expect(subject.position).to eq([3,1])
+		end
 	end
 end
