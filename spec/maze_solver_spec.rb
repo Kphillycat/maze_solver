@@ -7,7 +7,7 @@ require_relative '../lib/game'
 describe "maze_solver" do
 	let(:test_game) {Game.new}
 
-	context "piece moving" do
+	context "piece tests" do
 		subject{Piece.new(test_game)}
 		
 		it "should start the piece at position [3][0]" do
@@ -55,9 +55,41 @@ describe "maze_solver" do
 			expect(subject.position).to eq([2,9])
 		end
 		
-		it "should move based on array" do
+		it "should move based on possible moves returned array" do
 			subject.move
 			expect(subject.position).to eq([3,1])
 		end
+
+		it "should move based on possible moves returned array until it reaches exit [7][10]" do
+			subject.move
+			expect(subject.position).to eq([7,10])
+		end
+	end
+
+	
+	context "display tests" do
+		#let(:test_game) {Game.new}
+		test_game = Game.new
+		test_piece = Piece.new(test_game)
+
+		it "should remove current piece from board" do
+			test_game.display
+			test_piece.remove_from_board
+			test_game.display
+			expect(test_game.maze[3][0]).to eq(" ")
+		end	
+		
+		it "should have piece on board" do
+			test_game.update_piece
+			expect(test_game.maze[3][0]).to eq("-")
+		end
+		
+		it "should show marked path on board" do
+			test_piece.move_to(3,1)
+			expect(test_game.maze[3][0]).to eq("-")
+		end
+
+
+
 	end
 end

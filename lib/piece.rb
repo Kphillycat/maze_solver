@@ -1,13 +1,15 @@
 require 'debugger'
 
 class Piece
-	attr_accessor :moves, :col, :row
+	attr_accessor :moves, :col, :row, :game
 
 	def initialize(game)
 		@row = 3
 		@col = 0
 		@moves = Array.new(4) #0 - left, 1 - right, 2 - up, 3 - down
+		@game = game
 		@maze = game.maze
+		game.piece = self
 	end
 
 	def position
@@ -24,19 +26,33 @@ class Piece
 		@maze[x_pos][y_pos] == " "
 	end
 
+	def remove_from_board
+		puts "removing #{@row}, #{@col}"
+		@removed = true
+		@maze[@row][@col] = " "
+	end
+
+	def removed?
+		@removed
+	end
+
 	def move_left
+		puts "moving left"
 		self.col -= 1
 	end
 
 	def move_right
+		puts "moving right"
 		self.col += 1
 	end
 
 	def move_down
+		puts "moving down"
 		self.row += 1
 	end
 
 	def move_up
+		puts "moving up"
 		self.row -= 1
 	end
 
@@ -67,11 +83,19 @@ class Piece
 	def move
 		methods = [:move_left, :move_right, :move_up, :move_down]
 		possible_moves.each_with_index do |choice,index|
-			if choice
+			#choice = false if @maze[@row][@col] == "-"
+			game.display
+			#debugger
+			if choice				 
 				self.send(methods[index])
-				break
+				game.update_piece
+				#break
+				#debugger if self.row == 6 && self.col == 3
+				self.move unless self.row == 7 && self.col == 10					
 			end 
+			#remove_from_board if index == 3
 		end
+		remove_from_board
 	end
 
 	

@@ -1,10 +1,12 @@
 require 'debugger'
+require_relative './piece'
 
 class Game
-	attr_accessor :maze
+	attr_accessor :maze, :piece
 
 	def initialize
 		@maze = []
+		@piece
 		build_maze
 	end
 
@@ -19,7 +21,15 @@ class Game
 		end
 	end
 
+	def update_piece
+		maze[self.piece.row][self.piece.col] = "-"  
+		if self.piece.removed?
+			maze[self.piece.row][self.piece.col] = " "
+		end
+	end
+
 	def display
+		update_piece
 		maze.each do |row|
 			row.each do |value|
 				print value				
@@ -31,6 +41,7 @@ class Game
 end
 
 # m = Game.new
+# p = Piece.new(m)
 # m.display
 
 
