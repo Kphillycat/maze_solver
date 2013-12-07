@@ -55,10 +55,10 @@ describe "maze_solver" do
 			expect(subject.position).to eq([2,9])
 		end
 		
-		it "should move based on possible moves returned array" do
-			subject.move
-			expect(subject.position).to eq([3,1])
-		end
+		# it "should move based on possible moves returned array" do
+		# 	subject.move
+		# 	expect(subject.position).to eq([3,1])
+		# end
 
 		it "should move based on possible moves returned array until it reaches exit [7][10]" do
 			subject.move
@@ -68,25 +68,28 @@ describe "maze_solver" do
 
 	
 	context "display tests" do
-		#let(:test_game) {Game.new}
+		let(:test_game2) {Game.new}
 		test_game = Game.new
-		test_piece = Piece.new(test_game)
+		subject{Piece.new(test_game2)}
 
 		it "should remove current piece from board" do
-			test_game.display
-			test_piece.remove_from_board
-			test_game.display
-			expect(test_game.maze[3][0]).to eq(" ")
+			test_game2.display
+			subject.remove_from_board
+			test_game2.display
+			expect(test_game2.maze[3][0]).to eq("o")
 		end	
 		
 		it "should have piece on board" do
-			test_game.update_piece
-			expect(test_game.maze[3][0]).to eq("-")
+			subject
+			test_game2.update_piece
+			expect(test_game2.maze[3][0]).to eq("-")
 		end
 		
 		it "should show marked path on board" do
-			test_piece.move_to(3,1)
-			expect(test_game.maze[3][0]).to eq("-")
+			subject
+			test_game2.update_piece
+			subject.move_to(3,1)
+			expect(test_game2.maze[3][0]).to eq("-")
 		end
 
 

@@ -1,15 +1,18 @@
 require 'debugger'
 
 class Piece
-	attr_accessor :moves, :col, :row, :game
+	attr_accessor :moves, :col, :row, :game, :rows, :cols
 
 	def initialize(game)
 		@row = 3
 		@col = 0
-		@moves = Array.new(4) #0 - left, 1 - right, 2 - up, 3 - down
+		@moves = Array.new(4)
 		@game = game
 		@maze = game.maze
 		game.piece = self
+
+		@rows = [3]
+		@cols = [0]
 	end
 
 	def position
@@ -19,6 +22,8 @@ class Piece
 	def move_to(x_pos, y_pos)
 		self.row = x_pos #using self to be explicit
 		self.col = y_pos
+		self.rows << x_pos
+		self.cols << y_pos
 		@maze[@row][@col] = "-"
 	end
 
@@ -27,9 +32,12 @@ class Piece
 	end
 
 	def remove_from_board
-		puts "removing #{@row}, #{@col}"
 		@removed = true
-		@maze[@row][@col] = " "
+		#remove from rows array
+		game.update_piece
+		@maze[@rows.pop][@cols.pop] = "o"
+		@row = @rows.last
+		@col = @cols.last
 	end
 
 	def removed?
@@ -80,23 +88,49 @@ class Piece
 		moves
 	end
 
-	def move
+	def move		
+		moves= []
 		methods = [:move_left, :move_right, :move_up, :move_down]
-		possible_moves.each_with_index do |choice,index|
-			#choice = false if @maze[@row][@col] == "-"
-			game.display
-			#debugger
-			if choice				 
-				self.send(methods[index])
+		decision_fork = []
+		deadend = false
+		while position != [7,10]
+			possible_moves.each_with_index do |choice, index|
+				if choice
+					moves << methods[index] #only possible moves to be executed are in moves
+					decision_fork << position
+				end
+				# game.display
+				# if choice			 
+				# 	self.send(methods[index]) #moves left
+				# 	@rows << row
+				# 	@cols << col
+				# 	game.update_piece
+				# 	self.move unless self.row == 7 && self.col == 10 #possible_moves = [f,f,t,f]
+				# 	return if self.row == 7 && self.col == 10
+				# 	self.row = @rows.pop
+				# 	self.col = @cols.pop
+												
+				# end 
+			end
+			
+			
+				self.send(moves.last)
 				game.update_piece
-				#break
-				#debugger if self.row == 6 && self.col == 3
-				self.move unless self.row == 7 && self.col == 10					
-			end 
-			#remove_from_board if index == 3
+				self.rows << row
+				self.cols << col
+				game.display
+				break if position == [7,10] #maze solved
+			
+			if possible_moves.all? {|move| move == false}
+				until position == decision_fork.last do
+					remove_from_board
+					moves.pop
+				end
+			end
+			
+			decision_fork.pop #Go back to last decision fork
 		end
-		remove_from_board
+		
 	end
-
 	
 end
